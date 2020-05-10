@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { Post } from "./app.model";
+import { postsService } from "./posts.service";
 
 @Component({
   selector: "app-root",
@@ -10,8 +11,9 @@ import { Post } from "./app.model";
 })
 export class AppComponent implements OnInit {
   loadedPosts: Post[] = [];
+  isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postservice: postsService) {}
 
   ngOnInit() {
     this.FetchPosts();
@@ -19,26 +21,9 @@ export class AppComponent implements OnInit {
   }
 
   onCreatePost(postData: Post) {
-    // Send Http request
-    // this.http
-    //   .post(
-    //     'https://ng-complete-guide-c56d3.firebaseio.com/posts.json',
-    //     postData
-    //   )
-    //   .subscribe(responseData => {
-    //     console.log(responseData);
-    //   });
+   
+    this.postservice.postPosts(postData);
 
-    this.http
-      .post(
-        "https://the-beginning-2020-990ec.firebaseio.com/posts.json",
-        postData
-      )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
-
-    //  console.log(postData);
   }
 
   onFetchPosts() {
@@ -47,22 +32,10 @@ export class AppComponent implements OnInit {
   }
 
   FetchPosts() {
-    this.http
-      .get("https://the-beginning-2020-990ec.firebaseio.com/posts.json")
-      .pipe(
-        map((responseData: { [key: string]: Post }) => {
-          const data: Post[] = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              data.push({ ...responseData[key], id: key });
-            }
-          }
-          return data;
-        })
-      )
-      .subscribe((data: Array<Post>) => {
-        this.loadedPosts = data;
-      });
+    this.postservice.getPosts().subscribe((data: Array<Post>) => {
+      this.isFetching = false;
+      this.loadedPosts = data;
+    });
   }
 
   onClearPosts() {
