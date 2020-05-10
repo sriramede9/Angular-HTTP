@@ -1,6 +1,6 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Post } from "./app.model";
-import { map, catchError } from "rxjs/operators";
+import { map, catchError, tap } from "rxjs/operators";
 import { Subject, throwError } from "rxjs";
 
 export class postsService {
@@ -13,7 +13,11 @@ export class postsService {
     this.http
       .post(
         "https://the-beginning-2020-990ec.firebaseio.com/posts.json",
-        postData
+        postData,
+        {
+          observe: "response",
+          responseType: "text",
+        }
       )
       .subscribe(
         (responseData) => {
@@ -27,7 +31,11 @@ export class postsService {
 
   getPosts() {
     return this.http
-      .get("https://the-beginning-2020-990ec.firebaseio.com/posts.json")
+      .get("https://the-beginning-2020-990ec.firebaseio.com/posts.json", {
+        headers: new HttpHeaders({ customHeader: "helloHeader" }),
+        params: new HttpParams().set("print", "pretty"),
+        responseType: "json",
+      })
       .pipe(
         map((responseData: { [key: string]: Post }) => {
           const data: Post[] = [];
@@ -46,8 +54,14 @@ export class postsService {
   }
 
   clearData() {
-    return this.http.delete(
-      "https://the-beginning-2020-990ec.firebaseio.com/posts.json"
-    );
+    return this.http
+      .delete("https://the-beginning-2020-990ec.firebaseio.com/posts.json", {
+        observe: "events",
+      })
+      .pipe(
+        tap((events) => {
+          console.log(events);
+        })
+      );
   }
 }
