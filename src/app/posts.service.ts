@@ -1,9 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Post } from "./app.model";
-import { map } from "rxjs/operators";
+import { map, catchError } from "rxjs/operators";
+import { Subject, throwError } from "rxjs";
 
 export class postsService {
   private tempLoadingData: Post[];
+  postErrorSubject = new Subject<string>();
 
   constructor(private http: HttpClient) {}
 
@@ -13,9 +15,14 @@ export class postsService {
         "https://the-beginning-2020-990ec.firebaseio.com/posts.json",
         postData
       )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+      .subscribe(
+        (responseData) => {
+          console.log(responseData);
+        },
+        (error) => {
+          this.postErrorSubject.next(error.message);
+        }
+      );
   }
 
   getPosts() {
@@ -30,6 +37,10 @@ export class postsService {
             }
           }
           return data;
+        }),
+        catchError((error) => {
+          //analtics logic
+          return throwError(error);
         })
       );
   }

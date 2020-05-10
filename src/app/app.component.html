@@ -60,7 +60,12 @@
           content: <b>{{ item.content }}</b>
         </li>
       </ul>
-      <p *ngIf="isFetching">Loading...</p>
+      <p *ngIf="isFetching && !error">Loading...</p>
+      <div class="alert alert-danger" *ngIf="error">
+        <h4>Error occured</h4>
+        <p>{{ error }}</p>
+        <button class="btn btn-danger" (click)="onErrorclicked()">Clear</button>
+      </div>
     </div>
   </div>
 </div>
