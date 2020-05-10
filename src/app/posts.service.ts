@@ -33,4 +33,10 @@ export class postsService {
         })
       );
   }
+
+  clearData() {
+    return this.http.delete(
+      "https://the-beginning-2020-990ec.firebaseio.com/posts.json"
+    );
+  }
 }
