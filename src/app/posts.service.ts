@@ -60,7 +60,7 @@ export class postsService {
       })
       .pipe(
         tap((events) => {
-          console.log(events);
+          // console.log(events);
         })
       );
   }

@@ -51,3 +51,19 @@ console.log("Should pass from this !!");
 }
 }
 `
+# Adding more than one interceptors
+
+## The order is very important while adding interceptors, here the first one is adding a custom header and the second one is logging the headers and body [headers show the added header in the first service]
+
+`
+  {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: logginInterceptorService,
+      multi: true,
+    }
+`
