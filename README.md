@@ -26,33 +26,28 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
+## Get Request
 
-## Get Request 
+`this.http .get("https://the-beginning-2020-990ec.firebaseio.com/posts.json") .pipe( map((responseData: { [key: string]: Post }) => { const data: Post[] = []; for (const key in responseData) { if (responseData.hasOwnProperty(key)) { data.push({ ...responseData[key], id: key }); } } return data; }) ) .subscribe((data: Array<Post>) => { this.loadedPosts = data; });`
 
-` this.http
-      .get("https://the-beginning-2020-990ec.firebaseio.com/posts.json")
-      .pipe(
-        map((responseData: { [key: string]: Post }) => {
-          const data: Post[] = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              data.push({ ...responseData[key], id: key });
-            }
-          }
-          return data;
-        })
-      )
-      .subscribe((data: Array<Post>) => {
-        this.loadedPosts = data;
-      });`
+## Post Request
 
-## Post Request 
+`this.http .post( "https://the-beginning-2020-990ec.firebaseio.com/posts.json", postData ) .subscribe((responseData) => { console.log(responseData); });`
 
-`  this.http
-      .post(
-        "https://the-beginning-2020-990ec.firebaseio.com/posts.json",
-        postData
-      )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });`
+## Interceptors
+
+`export class AuthInterceptorService implements HttpInterceptor { intercept(req: HttpRequest<any>, next: HttpHandler) { console.log("Should pass from this !!"); return next.handle(req); } }`
+
+# Append headers to incomming request
+
+`export class AuthInterceptorService implements HttpInterceptor {
+intercept(req: HttpRequest<any>, next: HttpHandler) {
+console.log("Should pass from this !!");
+
+    const modifiedRequest=req.clone({headers:req.headers.append('Auth':'xyz')});
+
+    return next.handle(modifiedRequest);
+
+}
+}
+`
